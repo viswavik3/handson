@@ -19,6 +19,14 @@ mysqli_stmt_bind_param($stmt, "issb", $product_id, $product_name, $price, $photo
 mysqli_stmt_execute($stmt);
 mysqli_stmt_close($stmt);
 mysqli_close($conn);
+if($conn === false)
+{
+    die(print_r(sqlsrv_errors(), true));
+}
+if (!$stmt) {
+    die(print_r(sqlsrv_errors(), true));
+}
+
 
 // Upload photo to Azure Blob Storage
 $connection_string = "DefaultEndpointsProtocol=https;AccountName=handsonsac2299;AccountKey=O7SUNCufYYRjQZHuyVcQW5qtr7z+7VilWClf07LJMMdSCouVRLJkPiFyBHxskG4bB8e6WVj/y6Ly+AStwMUqRQ==;EndpointSuffix=core.windows.net";
@@ -30,4 +38,10 @@ $blob_client = $container_client->getBlobClient($blob_name);
 $options = new CreateBlobOptions();
 $options->setContentType($_FILES['photo']['type']);
 $blob_client->upload($photo_tmp, $options);
+
+if(sqlsrv_execute($stmt)) {
+    echo "Details saved successfully!";
+} else {
+    echo "Error: Could not save details.";
+}
 ?>
